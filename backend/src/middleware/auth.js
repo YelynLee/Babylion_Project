@@ -8,7 +8,7 @@ let auth = async (req, res, next) => {
 
     //headers: Bearer dafsladsfaf.adsfasfaf.dsfadfaff
     const token = authHeader && authHeader.split(' ')[1];
-    if(token === null) return res.sendStatus(401);
+    if(!token) return res.sendStatus(401); //헤더 자체가 없으면 token은 undefined이므로 null이 아닌 falsy 체크로 수정
 
     try {
         //토큰이 유효한지 확인

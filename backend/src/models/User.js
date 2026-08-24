@@ -36,7 +36,7 @@ userSchema.pre('save', async function(next) {
     next();
 })
 
-userSchmea.methods.comparePassword = async function(plainPassword) {
+userSchema.methods.comparePassword = async function(plainPassword) {
     let user = this; //database의 user data를 지목
     const match = await bcrypt.compare(plainPassword, user.password); //user가 입력한 password 그대로를 hash화 vs DB에 hashed된 password
     return match; //true or false

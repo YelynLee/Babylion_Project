@@ -6,8 +6,10 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(function (config) {
-
-    config.headers.Authorization = 'Bearer' + localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
+    if (token) { //토큰이 있을 때만 헤더를 붙임 ('Bearer' + token처럼 공백 누락 시 서버의 split(' ')이 실패했음)
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 }, function (error) {
     return Promise.reject(error);
