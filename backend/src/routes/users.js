@@ -25,7 +25,7 @@ router.post('/register', async (req, res, next) => {
     }
 });
 
-router.post('/login', (req,res) => {
+router.post('/login', async (req, res, next) => { //async 누락 + catch 누락으로 SyntaxError가 나던 부분 수정
     //req.body = email, password
     try {
 
@@ -36,7 +36,7 @@ router.post('/login', (req,res) => {
             return res.status(400).send("Auth failed, email not found");
         }
 
-        //해당 user의 password가 올바른지 
+        //해당 user의 password가 올바른지
         const isMatch = await user.comparePassword(req.body.password); //User.js에 선언된 comparePassword() 사용
         //req.body.password = plainPassword, isMatch에는 true or false 값이 들어옴
 
@@ -53,6 +53,16 @@ router.post('/login', (req,res) => {
 
         return res.json({ user, accessToken }) //Client에 전송, userSlice.js의 action.payload로 넣음
     }
+    catch (error) {
+        next(error) //에러 처리기로 error를 전달
+    }
+});
+
+router.post('/logout', (req, res) => {
+    //JWT는 stateless라서 서버에 별도로 지워야 할 세션이 없음(토큰은 frontend의 localStorage에서 삭제됨, thunkFunctions.js 참고)
+    //추후 refresh token/토큰 블랙리스트 등 서버 측 상태를 도입하면 이 라우트에서 실제 무효화 처리를 추가하면 됨
+    //지금은 frontend가 기대하는 엔드포인트를 제공해 로그아웃 요청 흐름을 완결시키는 역할
+    return res.sendStatus(200);
 });
 
 router.get('/auth', auth, async (req, res) => { //auth(.js)라는 middleware를 넣고, 이로부터 req.user 값을 받음
